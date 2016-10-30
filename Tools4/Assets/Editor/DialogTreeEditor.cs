@@ -141,6 +141,12 @@ public class DialogTreeEditor : EditorWindow {
 					EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth(100));
 					tree.treeNodes [i].textKey = EditorGUILayout.TextField (tree.treeNodes [i].textKey);
 					EditorGUILayout.EndHorizontal ();
+					GUILayout.BeginHorizontal ();
+					GUILayout.FlexibleSpace ();
+					if (GUILayout.Button ("Delete Node", EditorStyles.miniButtonRight, GUILayout.MaxWidth (100))) {
+
+					}
+					GUILayout.EndHorizontal ();
 					EditorGUILayout.Space ();
 				}
 			}
@@ -188,7 +194,6 @@ public class DialogTreeEditor : EditorWindow {
 
 		if (GUILayout.Button ("<<")) {
 			editingIndex = (--editingIndex + tree.treeNodes.Count) % tree.treeNodes.Count;
-			Debug.Log (editingIndex);
 		}
 
 		if (GUILayout.Button (">>")) {
