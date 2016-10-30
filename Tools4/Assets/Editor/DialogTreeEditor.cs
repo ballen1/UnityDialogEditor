@@ -212,11 +212,36 @@ public class DialogTreeEditor : EditorWindow {
 
 		if (GUILayout.Button ("<<") && tree.treeNodes.Count != 0) {
 			editingIndex = (--editingIndex + tree.treeNodes.Count) % tree.treeNodes.Count;
+			GUI.FocusControl (null);
 		}
 
 		if (GUILayout.Button (">>") && tree.treeNodes.Count != 0) {
 			editingIndex = ++editingIndex % tree.treeNodes.Count;
+			GUI.FocusControl (null);
 		}
+
+		EditorGUILayout.EndHorizontal ();
+
+		displayNodeEditor ();
+
+	}
+
+	private void displayNodeEditor() {
+
+		EditorGUILayout.Space ();
+
+		EditorGUILayout.BeginHorizontal ();
+		EditorGUILayout.LabelField ("Edit Node Information", EditorStyles.boldLabel);
+		EditorGUILayout.EndHorizontal ();
+
+		EditorGUILayout.BeginHorizontal ();
+
+		EditorGUILayout.LabelField ("Node Name", GUILayout.MaxWidth(100));
+		tree.treeNodes [editingIndex].name = EditorGUILayout.TextField (tree.treeNodes [editingIndex].name);
+		EditorGUILayout.EndHorizontal ();
+		EditorGUILayout.BeginHorizontal ();
+		EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth(100));
+		tree.treeNodes [editingIndex].textKey = EditorGUILayout.TextField (tree.treeNodes [editingIndex].textKey);
 
 		EditorGUILayout.EndHorizontal ();
 
