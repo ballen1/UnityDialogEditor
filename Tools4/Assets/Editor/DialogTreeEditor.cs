@@ -12,6 +12,7 @@ public class DialogTreeEditor : EditorWindow {
 	private List<bool> optionCollapse = new List<bool>();
 	private int popupIndex = 0;
 	private int editingIndex = 0;
+	private List<int> optionIndices = new List<int> ();
 
 	[MenuItem("Dialog/Tree Editor")]
 	static void Init() {
@@ -215,18 +216,21 @@ public class DialogTreeEditor : EditorWindow {
 
 		if (currentEditingIndex != editingIndex) {
 			optionCollapse.Clear ();
+			optionIndices.Clear ();
 		}
 
 		if (GUILayout.Button ("<<") && tree.treeNodes.Count != 0) {
 			editingIndex = (--editingIndex + tree.treeNodes.Count) % tree.treeNodes.Count;
 			GUI.FocusControl (null);
 			optionCollapse.Clear ();
+			optionIndices.Clear ();
 		}
 
 		if (GUILayout.Button (">>") && tree.treeNodes.Count != 0) {
 			editingIndex = ++editingIndex % tree.treeNodes.Count;
 			GUI.FocusControl (null);
 			optionCollapse.Clear ();
+			optionIndices.Clear ();
 		}
 
 		EditorGUILayout.EndHorizontal ();
@@ -263,6 +267,10 @@ public class DialogTreeEditor : EditorWindow {
 				optionCollapse.Add (false);
 			}
 
+			while (optionIndices.Count < tree.treeNodes [editingIndex].dialogOptions.Count) {
+				optionIndices.Add (0);
+			}
+
 			for (int i = 0; i < tree.treeNodes [editingIndex].dialogOptions.Count; i++) {
 				EditorGUILayout.BeginHorizontal ();
 				optionCollapse[i] = EditorGUILayout.Foldout (optionCollapse [i], "Option " + (i + 1));
@@ -273,6 +281,17 @@ public class DialogTreeEditor : EditorWindow {
 					EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth(100));
 					tree.treeNodes [editingIndex].dialogOptions[i].textKey = EditorGUILayout.TextField (tree.treeNodes [editingIndex].dialogOptions[i].textKey);
 					EditorGUILayout.EndHorizontal ();
+
+					// Popup menu  for selecting the next node
+					EditorGUILayout.BeginHorizontal();
+
+					string[] options = getPopupOptions ();
+					optionIndices[i] = EditorGUILayout.Popup ("Next Node", optionIndices[i], options);
+
+					tree.treeNodes[editingIndex].dialogOptions[i].nextNode = tree.treeNodes[optionIndices[i]];
+
+					EditorGUILayout.EndHorizontal ();
+
 				}
 
 			}
