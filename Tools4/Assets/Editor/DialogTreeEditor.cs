@@ -8,6 +8,7 @@ public class DialogTreeEditor : EditorWindow {
 	public DialogTree tree;
 	private bool nodeView = true;
 	private bool treeView = false;
+	private List<bool> collapse = new List<bool> ();
 
 	[MenuItem("Dialog/Tree Editor")]
 	static void Init() {
@@ -30,6 +31,11 @@ public class DialogTreeEditor : EditorWindow {
 		GUILayout.EndHorizontal ();
 
 		if (tree != null) {
+
+			// Collapse values for foldouts
+			while (collapse.Count < tree.treeNodes.Count) {
+				collapse.Add (false);
+			}
 			
 			GUILayout.BeginHorizontal ();
 
@@ -108,7 +114,21 @@ public class DialogTreeEditor : EditorWindow {
 		// Display nodes
 		else {
 			for (int i = 0; i < tree.treeNodes.Count; i++) {
+				EditorGUILayout.BeginHorizontal ();
+				collapse [i] = EditorGUILayout.Foldout (collapse [i], tree.treeNodes[i].name);
+				EditorGUILayout.EndHorizontal ();
 
+				if (collapse [i]) {
+					EditorGUILayout.Space ();
+					EditorGUILayout.BeginHorizontal ();
+					EditorGUILayout.LabelField ("Node Name");
+					tree.treeNodes [i].name = EditorGUILayout.TextField (tree.treeNodes [i].name);
+					EditorGUILayout.EndHorizontal ();
+					EditorGUILayout.BeginHorizontal ();
+					EditorGUILayout.LabelField ("String Key");
+					tree.treeNodes [i].textKey = EditorGUILayout.TextField (tree.treeNodes [i].textKey);
+					EditorGUILayout.EndHorizontal ();
+				}
 			}
 		}
 
@@ -117,6 +137,7 @@ public class DialogTreeEditor : EditorWindow {
 
 		if (GUILayout.Button ("New Node")) {
 			tree.treeNodes.Add (new DialogNode ());
+			collapse.Add (true);
 		}
 
 		EditorGUILayout.EndHorizontal ();
