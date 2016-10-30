@@ -59,6 +59,8 @@ public class DialogTreeEditor : EditorWindow {
 				displayTreeView ();
 			}
 
+			EditorUtility.SetDirty (tree);
+
 		}
 	}
 
@@ -121,13 +123,14 @@ public class DialogTreeEditor : EditorWindow {
 				if (collapse [i]) {
 					EditorGUILayout.Space ();
 					EditorGUILayout.BeginHorizontal ();
-					EditorGUILayout.LabelField ("Node Name");
+					EditorGUILayout.LabelField ("Node Name", GUILayout.MaxWidth(100));
 					tree.treeNodes [i].name = EditorGUILayout.TextField (tree.treeNodes [i].name);
 					EditorGUILayout.EndHorizontal ();
 					EditorGUILayout.BeginHorizontal ();
-					EditorGUILayout.LabelField ("String Key");
+					EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth(100));
 					tree.treeNodes [i].textKey = EditorGUILayout.TextField (tree.treeNodes [i].textKey);
 					EditorGUILayout.EndHorizontal ();
+					EditorGUILayout.Space ();
 				}
 			}
 		}
