@@ -9,7 +9,7 @@ public class DialogTreeEditor : EditorWindow {
 	private bool nodeView = true;
 	private bool treeView = false;
 	private List<bool> collapse = new List<bool> ();
-	private int popupIndex = 0;
+	private int popupIndex = -1;
 
 	[MenuItem("Dialog/Tree Editor")]
 	static void Init() {
@@ -17,7 +17,7 @@ public class DialogTreeEditor : EditorWindow {
 	}
 
 	void OnGUI() {
-		//return;
+		
 		GUILayout.BeginHorizontal ();
 		GUILayout.Label ("Dialog Tree Editor", EditorStyles.boldLabel);
 
@@ -32,6 +32,15 @@ public class DialogTreeEditor : EditorWindow {
 		GUILayout.EndHorizontal ();
 
 		if (tree != null) {
+
+			// Initialize root node index if necessary
+			if (popupIndex == -1) {
+				if (tree.root != null) {
+					popupIndex = tree.treeNodes.IndexOf (tree.root);
+				} else {
+					popupIndex = 0;
+				}
+			}
 
 			// Collapse values for foldouts
 			while (collapse.Count < tree.treeNodes.Count) {
@@ -171,6 +180,10 @@ public class DialogTreeEditor : EditorWindow {
 			
 		EditorGUILayout.LabelField ("Root Node", EditorStyles.boldLabel);
 		popupIndex = EditorGUILayout.Popup (popupIndex, options);
+
+		// Set root node
+		tree.root = tree.treeNodes[popupIndex];
+
 		EditorGUILayout.EndHorizontal ();
 
 	}
