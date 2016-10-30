@@ -9,6 +9,7 @@ public class DialogTreeEditor : EditorWindow {
 	private bool nodeView = true;
 	private bool treeView = false;
 	private List<bool> collapse = new List<bool> ();
+	private List<bool> optionCollapse = new List<bool>();
 	private int popupIndex = 0;
 	private int editingIndex = 0;
 
@@ -18,7 +19,7 @@ public class DialogTreeEditor : EditorWindow {
 	}
 
 	void OnGUI() {
-
+		
 		GUILayout.BeginHorizontal ();
 		GUILayout.Label ("Dialog Tree Editor", EditorStyles.boldLabel);
 
@@ -167,6 +168,7 @@ public class DialogTreeEditor : EditorWindow {
 
 		if (GUILayout.Button ("New Node")) {
 			DialogNode newNode = new DialogNode();
+			newNode.dialogOptions = new List<DialogOption>();
 			tree.treeNodes.Add (newNode);
 			collapse.Add (true);
 		}
@@ -208,16 +210,23 @@ public class DialogTreeEditor : EditorWindow {
 			editingIndex = 0;
 		}
 
+		int currentEditingIndex = editingIndex;
 		editingIndex = EditorGUILayout.Popup (editingIndex, options);
+
+		if (currentEditingIndex != editingIndex) {
+			optionCollapse.Clear ();
+		}
 
 		if (GUILayout.Button ("<<") && tree.treeNodes.Count != 0) {
 			editingIndex = (--editingIndex + tree.treeNodes.Count) % tree.treeNodes.Count;
 			GUI.FocusControl (null);
+			optionCollapse.Clear ();
 		}
 
 		if (GUILayout.Button (">>") && tree.treeNodes.Count != 0) {
 			editingIndex = ++editingIndex % tree.treeNodes.Count;
 			GUI.FocusControl (null);
+			optionCollapse.Clear ();
 		}
 
 		EditorGUILayout.EndHorizontal ();
@@ -228,23 +237,55 @@ public class DialogTreeEditor : EditorWindow {
 
 	private void displayNodeEditor() {
 
-		EditorGUILayout.Space ();
+		if (tree.treeNodes.Count > 0) {
 
-		EditorGUILayout.BeginHorizontal ();
-		EditorGUILayout.LabelField ("Edit Node Information", EditorStyles.boldLabel);
-		EditorGUILayout.EndHorizontal ();
+			EditorGUILayout.Space ();
 
-		EditorGUILayout.BeginHorizontal ();
+			EditorGUILayout.BeginHorizontal ();
+			EditorGUILayout.LabelField ("Edit Node Information", EditorStyles.boldLabel);
+			EditorGUILayout.EndHorizontal ();
 
-		EditorGUILayout.LabelField ("Node Name", GUILayout.MaxWidth(100));
-		tree.treeNodes [editingIndex].name = EditorGUILayout.TextField (tree.treeNodes [editingIndex].name);
-		EditorGUILayout.EndHorizontal ();
-		EditorGUILayout.BeginHorizontal ();
-		EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth(100));
-		tree.treeNodes [editingIndex].textKey = EditorGUILayout.TextField (tree.treeNodes [editingIndex].textKey);
+			EditorGUILayout.BeginHorizontal ();
+			EditorGUILayout.LabelField ("Node Name", GUILayout.MaxWidth (100));
+			tree.treeNodes [editingIndex].name = EditorGUILayout.TextField (tree.treeNodes [editingIndex].name);
+			EditorGUILayout.EndHorizontal ();
+			EditorGUILayout.BeginHorizontal ();
+			EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth (100));
+			tree.treeNodes [editingIndex].textKey = EditorGUILayout.TextField (tree.treeNodes [editingIndex].textKey);
+			EditorGUILayout.EndHorizontal ();
 
-		EditorGUILayout.EndHorizontal ();
+			EditorGUILayout.BeginHorizontal ();
+			EditorGUILayout.LabelField ("Dialog Options", EditorStyles.boldLabel);
+			EditorGUILayout.EndHorizontal ();
 
+			// Collapse values for foldouts
+			while (optionCollapse.Count < tree.treeNodes[editingIndex].dialogOptions.Count) {
+				optionCollapse.Add (false);
+			}
+
+			for (int i = 0; i < tree.treeNodes [editingIndex].dialogOptions.Count; i++) {
+				EditorGUILayout.BeginHorizontal ();
+				optionCollapse[i] = EditorGUILayout.Foldout (optionCollapse [i], "Option " + (i + 1));
+				EditorGUILayout.EndHorizontal ();
+
+				if (optionCollapse [i]) {
+					EditorGUILayout.BeginHorizontal ();
+					EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth(100));
+					tree.treeNodes [editingIndex].dialogOptions[i].textKey = EditorGUILayout.TextField (tree.treeNodes [editingIndex].dialogOptions[i].textKey);
+					EditorGUILayout.EndHorizontal ();
+				}
+
+			}
+
+			EditorGUILayout.BeginHorizontal ();
+			if (GUILayout.Button ("Add New Dialog Option")) {
+				DialogOption newOption = new DialogOption ();
+				tree.treeNodes [editingIndex].dialogOptions.Add (newOption);
+				optionCollapse.Add (true);
+			}
+			EditorGUILayout.EndHorizontal ();
+		
+		}
 	}
 
 	private string[] getPopupOptions() {
