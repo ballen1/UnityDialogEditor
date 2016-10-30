@@ -4,6 +4,6 @@ using System.Collections.Generic;
 
 public class DialogTree : ScriptableObject {
 
-	List<DialogNode> treeNodes;
+	public List<DialogNode> treeNodes;
 
 }
