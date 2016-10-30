@@ -9,7 +9,7 @@ public class DialogTreeEditor : EditorWindow {
 	private bool nodeView = true;
 	private bool treeView = false;
 	private List<bool> collapse = new List<bool> ();
-	private int popupIndex = -1;
+	private int popupIndex = 0;
 	private int editingIndex = 0;
 
 	[MenuItem("Dialog/Tree Editor")]
@@ -18,7 +18,7 @@ public class DialogTreeEditor : EditorWindow {
 	}
 
 	void OnGUI() {
-		
+
 		GUILayout.BeginHorizontal ();
 		GUILayout.Label ("Dialog Tree Editor", EditorStyles.boldLabel);
 
@@ -34,14 +34,15 @@ public class DialogTreeEditor : EditorWindow {
 
 		if (tree != null) {
 
-			// Initialize root node index if necessary
-			if (popupIndex == -1) {
-				if (tree.root != null) {
-					popupIndex = tree.treeNodes.IndexOf (tree.root);
-				} else {
+			if (tree.treeNodes.Count != 0) {
+				popupIndex = tree.treeNodes.IndexOf (tree.root);
+				if (popupIndex == -1) {
 					popupIndex = 0;
 				}
+			} else {
+				popupIndex = 0;
 			}
+
 
 			// Collapse values for foldouts
 			while (collapse.Count < tree.treeNodes.Count) {
@@ -102,10 +103,8 @@ public class DialogTreeEditor : EditorWindow {
 				path = pathRelToAssetsDir(path);
 
 				tree.treeNodes = new List<DialogNode> ();
-
 				AssetDatabase.CreateAsset (tree, path + System.IO.Path.DirectorySeparatorChar + "DialogTree.asset");
 				AssetDatabase.SaveAssets ();
-
 			}
 		}
 
@@ -126,6 +125,9 @@ public class DialogTreeEditor : EditorWindow {
 		}
 		// Display nodes
 		else {
+
+			int nodeToDelete = -1;
+
 			for (int i = 0; i < tree.treeNodes.Count; i++) {
 				EditorGUILayout.BeginHorizontal ();
 				collapse [i] = EditorGUILayout.Foldout (collapse [i], tree.treeNodes[i].name);
@@ -144,19 +146,28 @@ public class DialogTreeEditor : EditorWindow {
 					GUILayout.BeginHorizontal ();
 					GUILayout.FlexibleSpace ();
 					if (GUILayout.Button ("Delete Node", EditorStyles.miniButtonRight, GUILayout.MaxWidth (100))) {
-
+						nodeToDelete = i; 
 					}
 					GUILayout.EndHorizontal ();
 					EditorGUILayout.Space ();
 				}
 			}
+
+			if (nodeToDelete != -1) {
+				tree.treeNodes.RemoveAt (nodeToDelete);
+				collapse.RemoveAt (nodeToDelete);
+				tree.treeNodes.TrimExcess ();
+				collapse.TrimExcess ();
+			}
+
 		}
 
 		// Button to create new node
 		EditorGUILayout.BeginHorizontal();
 
 		if (GUILayout.Button ("New Node")) {
-			tree.treeNodes.Add (new DialogNode ());
+			DialogNode newNode = new DialogNode();
+			tree.treeNodes.Add (newNode);
 			collapse.Add (true);
 		}
 
@@ -175,7 +186,9 @@ public class DialogTreeEditor : EditorWindow {
 		popupIndex = EditorGUILayout.Popup (popupIndex, options);
 
 		// Set root node
-		tree.root = tree.treeNodes[popupIndex];
+		if (tree.treeNodes.Count != 0) {
+			tree.root = tree.treeNodes [popupIndex];
+		}
 
 		EditorGUILayout.EndHorizontal ();
 
@@ -190,13 +203,18 @@ public class DialogTreeEditor : EditorWindow {
 
 		string[] options = getPopupOptions ();
 		EditorGUILayout.LabelField ("Node Navigation", EditorStyles.boldLabel);
+
+		if (tree.treeNodes.Count = 0) {
+			editingIndex = 0;
+		}
+
 		editingIndex = EditorGUILayout.Popup (editingIndex, options);
 
-		if (GUILayout.Button ("<<")) {
+		if (GUILayout.Button ("<<") && tree.treeNodes.Count != 0) {
 			editingIndex = (--editingIndex + tree.treeNodes.Count) % tree.treeNodes.Count;
 		}
 
-		if (GUILayout.Button (">>")) {
+		if (GUILayout.Button (">>") && tree.treeNodes.Count != 0) {
 			editingIndex = ++editingIndex % tree.treeNodes.Count;
 		}
 
@@ -208,7 +226,7 @@ public class DialogTreeEditor : EditorWindow {
 
 		string[] options;
 
-		if (tree.root == null) {
+		if (tree.treeNodes.Count == 0) {
 			options = new string[] {"No Nodes"};
 		} else {
 			List<string> optionList = new List<string> ();
