@@ -10,6 +10,7 @@ public class DialogTreeEditor : EditorWindow {
 	private bool treeView = false;
 	private List<bool> collapse = new List<bool> ();
 	private int popupIndex = -1;
+	private int editingIndex = 0;
 
 	[MenuItem("Dialog/Tree Editor")]
 	static void Init() {
@@ -162,6 +163,44 @@ public class DialogTreeEditor : EditorWindow {
 		EditorGUILayout.Space ();
 		EditorGUILayout.BeginHorizontal ();
 
+		string[] options = getPopupOptions ();
+
+		EditorGUILayout.LabelField ("Root Node", EditorStyles.boldLabel);
+		popupIndex = EditorGUILayout.Popup (popupIndex, options);
+
+		// Set root node
+		tree.root = tree.treeNodes[popupIndex];
+
+		EditorGUILayout.EndHorizontal ();
+
+		displayTreeNavigation ();
+
+	}
+
+	private void displayTreeNavigation() {
+
+		EditorGUILayout.Space ();
+		EditorGUILayout.BeginHorizontal ();
+
+		string[] options = getPopupOptions ();
+		EditorGUILayout.LabelField ("Node Navigation", EditorStyles.boldLabel);
+		editingIndex = EditorGUILayout.Popup (editingIndex, options);
+
+		if (GUILayout.Button ("<<")) {
+			editingIndex = (--editingIndex + tree.treeNodes.Count) % tree.treeNodes.Count;
+			Debug.Log (editingIndex);
+		}
+
+		if (GUILayout.Button (">>")) {
+			editingIndex = ++editingIndex % tree.treeNodes.Count;
+		}
+
+		EditorGUILayout.EndHorizontal ();
+
+	}
+
+	private string[] getPopupOptions() {
+
 		string[] options;
 
 		if (tree.root == null) {
@@ -177,14 +216,9 @@ public class DialogTreeEditor : EditorWindow {
 			}
 			options = optionList.ToArray ();
 		}
-			
-		EditorGUILayout.LabelField ("Root Node", EditorStyles.boldLabel);
-		popupIndex = EditorGUILayout.Popup (popupIndex, options);
 
-		// Set root node
-		tree.root = tree.treeNodes[popupIndex];
 
-		EditorGUILayout.EndHorizontal ();
+		return options;
 
 	}
 
