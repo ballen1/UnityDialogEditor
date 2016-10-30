@@ -9,6 +9,7 @@ public class DialogTreeEditor : EditorWindow {
 	private bool nodeView = true;
 	private bool treeView = false;
 	private List<bool> collapse = new List<bool> ();
+	private int popupIndex = 0;
 
 	[MenuItem("Dialog/Tree Editor")]
 	static void Init() {
@@ -16,7 +17,7 @@ public class DialogTreeEditor : EditorWindow {
 	}
 
 	void OnGUI() {
-
+		//return;
 		GUILayout.BeginHorizontal ();
 		GUILayout.Label ("Dialog Tree Editor", EditorStyles.boldLabel);
 
@@ -148,6 +149,29 @@ public class DialogTreeEditor : EditorWindow {
 	}
 
 	private void displayTreeView() {
+
+		EditorGUILayout.Space ();
+		EditorGUILayout.BeginHorizontal ();
+
+		string[] options;
+
+		if (tree.root == null) {
+			options = new string[] {"No Nodes"};
+		} else {
+			List<string> optionList = new List<string> ();
+			for (int i = 0; i < tree.treeNodes.Count; i++) {
+				if (optionList.Contains (tree.treeNodes [i].name)) {
+					optionList.Add (tree.treeNodes [i].name + "_" + i +" (duplicate name)");
+				} else {
+					optionList.Add(tree.treeNodes [i].name);
+				}
+			}
+			options = optionList.ToArray ();
+		}
+			
+		EditorGUILayout.LabelField ("Root Node", EditorStyles.boldLabel);
+		popupIndex = EditorGUILayout.Popup (popupIndex, options);
+		EditorGUILayout.EndHorizontal ();
 
 	}
 

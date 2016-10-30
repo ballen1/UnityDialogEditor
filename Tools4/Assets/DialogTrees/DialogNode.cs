@@ -7,6 +7,6 @@ public class DialogNode {
 
 	public string name = "Node";
 	public string textKey;
-	List<DialogNode> nodes;
+	public List<DialogNode> nodes;
 
 }

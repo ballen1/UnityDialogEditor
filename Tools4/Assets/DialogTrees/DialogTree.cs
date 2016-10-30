@@ -5,5 +5,5 @@ using System.Collections.Generic;
 public class DialogTree : ScriptableObject {
 
 	public List<DialogNode> treeNodes;
-
+	public DialogNode root;
 }
