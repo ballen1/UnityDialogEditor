@@ -183,7 +183,7 @@ public class DialogTreeEditor : EditorWindow {
 		EditorGUILayout.Space ();
 		EditorGUILayout.BeginHorizontal ();
 
-		string[] options = getPopupOptions ();
+		string[] options = getPopupOptions (false);
 
 		EditorGUILayout.LabelField ("Root Node", EditorStyles.boldLabel);
 		popupIndex = EditorGUILayout.Popup (popupIndex, options);
@@ -204,7 +204,7 @@ public class DialogTreeEditor : EditorWindow {
 		EditorGUILayout.Space ();
 		EditorGUILayout.BeginHorizontal ();
 
-		string[] options = getPopupOptions ();
+		string[] options = getPopupOptions (false);
 		EditorGUILayout.LabelField ("Node Navigation", EditorStyles.boldLabel);
 
 		if (tree.treeNodes.Count == 0) {
@@ -285,10 +285,30 @@ public class DialogTreeEditor : EditorWindow {
 					// Popup menu  for selecting the next node
 					EditorGUILayout.BeginHorizontal();
 
-					string[] options = getPopupOptions ();
+					if (tree.treeNodes[editingIndex].dialogOptions[i].nextNode != null) {
+						if (tree.treeNodes [editingIndex].dialogOptions [i].nextNode.name == "END") {
+							optionIndices [i] = tree.treeNodes.Count;
+						} else {
+							optionIndices [i] = tree.treeNodes.IndexOf (tree.treeNodes [editingIndex].dialogOptions [i].nextNode);
+							if (optionIndices [i] == -1) {
+								optionIndices [i] = 0;
+							}
+						}
+					} else {
+						optionIndices[i] = 0;
+					}
+						
+					string[] options = getPopupOptions (true);
 					optionIndices[i] = EditorGUILayout.Popup ("Next Node", optionIndices[i], options);
 
-					tree.treeNodes[editingIndex].dialogOptions[i].nextNode = tree.treeNodes[optionIndices[i]];
+					// Special case for END node
+					if (optionIndices [i] == tree.treeNodes.Count) {
+						DialogNode END_NODE = new DialogNode ();
+						END_NODE.name = "END";
+						tree.treeNodes [editingIndex].dialogOptions [i].nextNode = END_NODE;
+					} else {
+						tree.treeNodes [editingIndex].dialogOptions [i].nextNode = tree.treeNodes [optionIndices [i]];
+					}
 
 					EditorGUILayout.EndHorizontal ();
 
@@ -307,7 +327,7 @@ public class DialogTreeEditor : EditorWindow {
 		}
 	}
 
-	private string[] getPopupOptions() {
+	private string[] getPopupOptions(bool includeEndOption) {
 
 		string[] options;
 
@@ -321,6 +341,9 @@ public class DialogTreeEditor : EditorWindow {
 				} else {
 					optionList.Add(tree.treeNodes [i].name);
 				}
+			}
+			if (includeEndOption) {
+				optionList.Add ("END");
 			}
 			options = optionList.ToArray ();
 		}
