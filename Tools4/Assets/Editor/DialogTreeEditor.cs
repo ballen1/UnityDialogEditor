@@ -204,7 +204,7 @@ public class DialogTreeEditor : EditorWindow {
 		string[] options = getPopupOptions ();
 		EditorGUILayout.LabelField ("Node Navigation", EditorStyles.boldLabel);
 
-		if (tree.treeNodes.Count = 0) {
+		if (tree.treeNodes.Count == 0) {
 			editingIndex = 0;
 		}
 
