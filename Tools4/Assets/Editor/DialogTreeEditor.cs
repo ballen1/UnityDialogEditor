@@ -158,8 +158,6 @@ public class DialogTreeEditor : EditorWindow {
 			if (nodeToDelete != -1) {
 				tree.treeNodes.RemoveAt (nodeToDelete);
 				collapse.RemoveAt (nodeToDelete);
-				tree.treeNodes.TrimExcess ();
-				collapse.TrimExcess ();
 			}
 
 		}
@@ -271,6 +269,8 @@ public class DialogTreeEditor : EditorWindow {
 				optionIndices.Add (0);
 			}
 
+			int optionToDelete = -1;
+
 			for (int i = 0; i < tree.treeNodes [editingIndex].dialogOptions.Count; i++) {
 				EditorGUILayout.BeginHorizontal ();
 				optionCollapse[i] = EditorGUILayout.Foldout (optionCollapse [i], "Option " + (i + 1));
@@ -311,6 +311,20 @@ public class DialogTreeEditor : EditorWindow {
 					}
 
 					EditorGUILayout.EndHorizontal ();
+
+					EditorGUILayout.BeginHorizontal ();
+					GUILayout.FlexibleSpace ();
+
+					if (GUILayout.Button ("Delete Dialog Option", EditorStyles.miniButtonRight, GUILayout.MaxWidth (120))) {
+						optionToDelete = i; 
+					}
+
+					EditorGUILayout.EndHorizontal ();
+
+					if (optionToDelete != -1) {
+						tree.treeNodes [editingIndex].dialogOptions.RemoveAt (optionToDelete);
+						optionCollapse.RemoveAt (optionToDelete);
+					}
 
 				}
 
