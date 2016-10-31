@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class DialogOption {
 
 	public string textKey;
-	public DialogNode nextNode;
+	public int nextNode;
+	public bool isEnd = false;
 
 }

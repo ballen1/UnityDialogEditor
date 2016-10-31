@@ -36,16 +36,6 @@ public class DialogTreeEditor : EditorWindow {
 
 		if (tree != null) {
 
-			if (tree.treeNodes.Count != 0) {
-				popupIndex = tree.treeNodes.IndexOf (tree.root);
-				if (popupIndex == -1) {
-					popupIndex = 0;
-				}
-			} else {
-				popupIndex = 0;
-			}
-
-
 			// Collapse values for foldouts
 			while (collapse.Count < tree.treeNodes.Count) {
 				collapse.Add (false);
@@ -166,9 +156,7 @@ public class DialogTreeEditor : EditorWindow {
 		EditorGUILayout.BeginHorizontal();
 
 		if (GUILayout.Button ("New Node")) {
-			DialogNode newNode = new DialogNode();
-			newNode.dialogOptions = new List<DialogOption>();
-			tree.treeNodes.Add (newNode);
+			tree.addNewDialogNode ();
 			collapse.Add (true);
 		}
 
@@ -183,12 +171,28 @@ public class DialogTreeEditor : EditorWindow {
 
 		string[] options = getPopupOptions (false);
 
+		if (tree.treeNodes.Count != 0) {
+
+			popupIndex = tree.treeNodes.FindIndex (
+				delegate(DialogNode node)
+				{
+					return (node.GID == tree.root);
+				}
+			);
+				
+			if (popupIndex == -1) {
+				popupIndex = 0;
+			}
+		} else {
+			popupIndex = 0;
+		}
+			
 		EditorGUILayout.LabelField ("Root Node", EditorStyles.boldLabel);
 		popupIndex = EditorGUILayout.Popup (popupIndex, options);
 
 		// Set root node
 		if (tree.treeNodes.Count != 0) {
-			tree.root = tree.treeNodes [popupIndex];
+			tree.root = tree.treeNodes [popupIndex].GID;
 		}
 
 		EditorGUILayout.EndHorizontal ();
@@ -286,10 +290,14 @@ public class DialogTreeEditor : EditorWindow {
 					EditorGUILayout.BeginHorizontal();
 
 					if (tree.treeNodes[editingIndex].dialogOptions[i].nextNode != null) {
-						if (tree.treeNodes [editingIndex].dialogOptions [i].nextNode.name == "END") {
+
+						if (tree.treeNodes [editingIndex].dialogOptions [i].isEnd) {
 							optionIndices [i] = tree.treeNodes.Count;
 						} else {
-							optionIndices [i] = tree.treeNodes.IndexOf (tree.treeNodes [editingIndex].dialogOptions [i].nextNode);
+							optionIndices [i] = tree.treeNodes.FindIndex (
+								delegate(DialogNode obj) {
+									return obj.GID == tree.treeNodes[editingIndex].dialogOptions[i].nextNode;	
+								});
 							if (optionIndices [i] == -1) {
 								optionIndices [i] = 0;
 							}
@@ -303,11 +311,9 @@ public class DialogTreeEditor : EditorWindow {
 
 					// Special case for END node
 					if (optionIndices [i] == tree.treeNodes.Count) {
-						DialogNode END_NODE = new DialogNode ();
-						END_NODE.name = "END";
-						tree.treeNodes [editingIndex].dialogOptions [i].nextNode = END_NODE;
+						tree.treeNodes [editingIndex].dialogOptions [i].isEnd = true;
 					} else {
-						tree.treeNodes [editingIndex].dialogOptions [i].nextNode = tree.treeNodes [optionIndices [i]];
+						tree.treeNodes [editingIndex].dialogOptions [i].nextNode = tree.treeNodes [optionIndices [i]].GID;
 					}
 
 					EditorGUILayout.EndHorizontal ();
