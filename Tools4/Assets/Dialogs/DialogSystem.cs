@@ -18,17 +18,17 @@ public class DialogSystem : MonoBehaviour {
 		DialogNode rootNode = getNodeFromGID (tree.root);
 		currentNode = rootNode;
 
-		if (!string.IsNullOrEmpty (rootNode.textKey)) {
-			nodeText.text = LocalizationManager.Get (rootNode.textKey);
+		if (!string.IsNullOrEmpty (currentNode.textKey)) {
+			nodeText.text = LocalizationManager.Get (currentNode.textKey);
 
 			if (currentNode.dialogOptions.Count >= 1) {
-				opText1.text = LocalizationManager.Get(rootNode.dialogOptions[0].textKey);
+				opText1.text = "1. " + LocalizationManager.Get(currentNode.dialogOptions[0].textKey);
 			}
 			if (currentNode.dialogOptions.Count >= 2) {
-				opText1.text = LocalizationManager.Get(rootNode.dialogOptions[1].textKey);
+				opText2.text = "2. " + LocalizationManager.Get(currentNode.dialogOptions[1].textKey);
 			}
 			if (currentNode.dialogOptions.Count >= 3) {
-				opText1.text = LocalizationManager.Get(rootNode.dialogOptions[2].textKey);
+				opText3.text = "3. " + LocalizationManager.Get(currentNode.dialogOptions[2].textKey);
 			}
 		}
 
@@ -36,7 +36,31 @@ public class DialogSystem : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+
+		if (!string.IsNullOrEmpty (currentNode.textKey)) {
+			nodeText.text = LocalizationManager.Get (currentNode.textKey);
+
+			if (currentNode.dialogOptions.Count >= 1) {
+				opText1.text = "1. " + LocalizationManager.Get(currentNode.dialogOptions[0].textKey);
+			}
+			if (currentNode.dialogOptions.Count >= 2) {
+				opText2.text = "2. " + LocalizationManager.Get(currentNode.dialogOptions[1].textKey);
+			}
+			if (currentNode.dialogOptions.Count >= 3) {
+				opText3.text = "3. " + LocalizationManager.Get(currentNode.dialogOptions[2].textKey);
+			}
+		}
+
+		if (Input.GetKey(KeyCode.Alpha1)) {
+			
+		}
+		if (Input.GetKey (KeyCode.Alpha2)) {
+
+		}
+		if (Input.GetKey (KeyCode.Alpha3)) {
+
+		}
+
 	}
 
 	private DialogNode getNodeFromGID(int GID) {
