@@ -15,7 +15,7 @@ public class LocalizationManagerEditor : Editor {
 	}
 
 	public override void OnInspectorGUI() {
-
+		
 		EditorGUILayout.PropertyField (translationUnit);
 
 		TranslationUnit tu = (TranslationUnit)translationUnit.objectReferenceValue;
