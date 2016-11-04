@@ -53,20 +53,20 @@ public class DialogSystem : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKey(KeyCode.Alpha1)) {
+		if (Input.GetKeyDown(KeyCode.Alpha1)) {
 			if (currentNode.dialogOptions [0].isEnd) {
 				theEnd ();
 			}
 			currentNode = getNodeFromGID(currentNode.dialogOptions [0].nextNode);
 		}
-		if (Input.GetKey (KeyCode.Alpha2)) {
+		if (Input.GetKeyDown (KeyCode.Alpha2)) {
 			if (currentNode.dialogOptions [1].isEnd) {
 				theEnd ();
 			}
 			currentNode = getNodeFromGID(currentNode.dialogOptions [1].nextNode);
 
 		}
-		if (Input.GetKey (KeyCode.Alpha3)) {
+		if (Input.GetKeyDown(KeyCode.Alpha3)) {
 			if (currentNode.dialogOptions [2].isEnd) {
 				theEnd ();
 			}

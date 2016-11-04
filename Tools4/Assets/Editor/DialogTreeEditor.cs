@@ -266,7 +266,7 @@ public class DialogTreeEditor : EditorWindow {
 
 			// Collapse values for foldouts
 			while (optionCollapse.Count < tree.treeNodes[editingIndex].dialogOptions.Count) {
-				optionCollapse.Add (false);
+				optionCollapse.Add (true);
 			}
 
 			while (optionIndices.Count < tree.treeNodes [editingIndex].dialogOptions.Count) {
