@@ -313,6 +313,7 @@ public class DialogTreeEditor : EditorWindow {
 					if (optionIndices [i] == tree.treeNodes.Count) {
 						tree.treeNodes [editingIndex].dialogOptions [i].isEnd = true;
 					} else {
+						tree.treeNodes [editingIndex].dialogOptions [i].isEnd = false;
 						tree.treeNodes [editingIndex].dialogOptions [i].nextNode = tree.treeNodes [optionIndices [i]].GID;
 					}
 
