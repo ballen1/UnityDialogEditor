@@ -148,20 +148,22 @@ public class DialogTreeEditor : EditorWindow {
 					tree.treeNodes [i].textKey = EditorGUILayout.TextField (tree.treeNodes [i].textKey);
 					EditorGUILayout.EndHorizontal ();
 
-					EditorGUILayout.BeginHorizontal ();
-					EditorGUILayout.LabelField ("Text Preview", GUILayout.MaxWidth (110));
-					string preview = languageAsset.Get (tree.treeNodes [i].textKey);
+					if (languageAsset != null) {
+						EditorGUILayout.BeginHorizontal ();
+						EditorGUILayout.LabelField ("Text Preview", GUILayout.MaxWidth (110));
+						string preview = languageAsset.Get (tree.treeNodes [i].textKey);
 
-					if (preview != null) {
-						EditorGUILayout.BeginVertical ();
-						GUIStyle wrap = new GUIStyle ();
-						wrap.wordWrap = true;
-						EditorGUILayout.LabelField (preview, wrap);
-						EditorGUILayout.EndVertical();
-					} else {
-						EditorGUILayout.LabelField ("Invalid Key");
+						if (preview != null) {
+							EditorGUILayout.BeginVertical ();
+							GUIStyle wrap = new GUIStyle ();
+							wrap.wordWrap = true;
+							EditorGUILayout.LabelField (preview, wrap);
+							EditorGUILayout.EndVertical ();
+						} else {
+							EditorGUILayout.LabelField ("Invalid Key");
+						}
+						EditorGUILayout.EndHorizontal ();
 					}
-					EditorGUILayout.EndHorizontal ();
 
 					GUILayout.BeginHorizontal ();
 					GUILayout.FlexibleSpace ();
@@ -288,6 +290,23 @@ public class DialogTreeEditor : EditorWindow {
 			tree.treeNodes [editingIndex].textKey = EditorGUILayout.TextField (tree.treeNodes [editingIndex].textKey);
 			EditorGUILayout.EndHorizontal ();
 
+			if (languageAsset != null) {
+				EditorGUILayout.BeginHorizontal ();
+				EditorGUILayout.LabelField ("Text Preview", GUILayout.MaxWidth (110));
+				string preview = languageAsset.Get (tree.treeNodes [editingIndex].textKey);
+
+				if (preview != null) {
+					EditorGUILayout.BeginVertical ();
+					GUIStyle wrap = new GUIStyle ();
+					wrap.wordWrap = true;
+					EditorGUILayout.LabelField (preview, wrap);
+					EditorGUILayout.EndVertical ();
+				} else {
+					EditorGUILayout.LabelField ("Invalid Key");
+				}
+				EditorGUILayout.EndHorizontal ();
+			}
+
 			EditorGUILayout.BeginHorizontal ();
 			EditorGUILayout.LabelField ("Dialog Options", EditorStyles.boldLabel);
 			EditorGUILayout.EndHorizontal ();
@@ -313,6 +332,23 @@ public class DialogTreeEditor : EditorWindow {
 					EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth(100));
 					tree.treeNodes [editingIndex].dialogOptions[i].textKey = EditorGUILayout.TextField (tree.treeNodes [editingIndex].dialogOptions[i].textKey);
 					EditorGUILayout.EndHorizontal ();
+
+					if (languageAsset != null) {
+						EditorGUILayout.BeginHorizontal ();
+						EditorGUILayout.LabelField ("Text Preview", GUILayout.MaxWidth (110));
+						string option_preview = languageAsset.Get (tree.treeNodes [editingIndex].dialogOptions [i].textKey);
+
+						if (option_preview != null) {
+							EditorGUILayout.BeginVertical ();
+							GUIStyle wrap = new GUIStyle ();
+							wrap.wordWrap = true;
+							EditorGUILayout.LabelField (option_preview, wrap);
+							EditorGUILayout.EndVertical ();
+						} else {
+							EditorGUILayout.LabelField ("Invalid Key");
+						}
+						EditorGUILayout.EndHorizontal ();
+					}
 
 					// Popup menu  for selecting the next node
 					EditorGUILayout.BeginHorizontal();
