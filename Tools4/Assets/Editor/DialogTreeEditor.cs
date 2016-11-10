@@ -14,6 +14,9 @@ public class DialogTreeEditor : EditorWindow {
 	private int editingIndex = 0;
 	private List<int> optionIndices = new List<int> ();
 
+	LanguageUnit languageAsset;
+
+
 	[MenuItem("Dialog/Tree Editor")]
 	static void Init() {
 		EditorWindow.GetWindow<DialogTreeEditor>("Dialog Tree Editor");
@@ -32,6 +35,14 @@ public class DialogTreeEditor : EditorWindow {
 			CreateDialogTree ();
 		}
 
+		GUILayout.EndHorizontal ();
+
+		GUILayout.BeginHorizontal ();
+		languageAsset = (LanguageUnit)EditorGUILayout.ObjectField ("Language File", languageAsset, typeof(LanguageUnit), false);
+		GUILayout.EndHorizontal ();
+
+		GUILayout.BeginHorizontal ();
+		EditorGUILayout.HelpBox ("Choosing a language asset allows you to view text previews and choose text strings from the language asset", MessageType.Info);
 		GUILayout.EndHorizontal ();
 
 		if (tree != null) {
@@ -66,6 +77,7 @@ public class DialogTreeEditor : EditorWindow {
 			EditorUtility.SetDirty (tree);
 
 		}
+
 	}
 
 	private void OpenDialogTree() {
@@ -135,6 +147,22 @@ public class DialogTreeEditor : EditorWindow {
 					EditorGUILayout.LabelField ("String Key", GUILayout.MaxWidth(100));
 					tree.treeNodes [i].textKey = EditorGUILayout.TextField (tree.treeNodes [i].textKey);
 					EditorGUILayout.EndHorizontal ();
+
+					EditorGUILayout.BeginHorizontal ();
+					EditorGUILayout.LabelField ("Text Preview", GUILayout.MaxWidth (110));
+					string preview = languageAsset.Get (tree.treeNodes [i].textKey);
+
+					if (preview != null) {
+						EditorGUILayout.BeginVertical ();
+						GUIStyle wrap = new GUIStyle ();
+						wrap.wordWrap = true;
+						EditorGUILayout.LabelField (preview, wrap);
+						EditorGUILayout.EndVertical();
+					} else {
+						EditorGUILayout.LabelField ("Invalid Key");
+					}
+					EditorGUILayout.EndHorizontal ();
+
 					GUILayout.BeginHorizontal ();
 					GUILayout.FlexibleSpace ();
 					if (GUILayout.Button ("Delete Node", EditorStyles.miniButtonRight, GUILayout.MaxWidth (100))) {
