@@ -14,6 +14,8 @@ public class DialogTreeEditor : EditorWindow {
 	private int editingIndex = 0;
 	private List<int> optionIndices = new List<int> ();
 
+	private string search;
+
 	LanguageUnit languageAsset;
 
 
@@ -44,6 +46,35 @@ public class DialogTreeEditor : EditorWindow {
 		GUILayout.BeginHorizontal ();
 		EditorGUILayout.HelpBox ("Choosing a language asset allows you to view text previews and choose text strings from the language asset", MessageType.Info);
 		GUILayout.EndHorizontal ();
+
+		GUILayout.BeginHorizontal ();
+		EditorGUILayout.LabelField ("Search and Copy String Key to Clipboard", EditorStyles.boldLabel);
+		GUILayout.EndHorizontal ();
+
+		GUILayout.BeginHorizontal ();
+		EditorGUILayout.LabelField ("Search String:", GUILayout.MaxWidth(200));
+		search = EditorGUILayout.TextField (search);
+		GUILayout.EndHorizontal ();
+
+		if (languageAsset != null && !string.IsNullOrEmpty (search)) {
+			for (int i = 0; i < languageAsset.values.Count; i++) {
+				if (languageAsset.values [i].Contains (search)) {
+					EditorGUILayout.BeginHorizontal ();
+					if (GUILayout.Button ("Copy Key", GUILayout.MaxWidth(100))) {
+						EditorGUIUtility.systemCopyBuffer = languageAsset.keys [i];
+					}
+					EditorGUILayout.BeginVertical ();
+					GUIStyle wrap = new GUIStyle ();
+					wrap.wordWrap = true;
+					EditorGUILayout.LabelField (languageAsset.values [i], wrap);
+					EditorGUILayout.EndVertical ();
+					EditorGUILayout.EndHorizontal ();
+				}
+			}
+		}
+
+		EditorGUILayout.Space ();
+		EditorGUILayout.Space ();
 
 		if (tree != null) {
 
@@ -382,6 +413,26 @@ public class DialogTreeEditor : EditorWindow {
 					}
 
 					EditorGUILayout.EndHorizontal ();
+
+					if (languageAsset != null) {
+						EditorGUILayout.BeginHorizontal ();
+						EditorGUILayout.LabelField ("Next Node Text Preview", GUILayout.MaxWidth (150));
+						if (!tree.treeNodes [editingIndex].dialogOptions [i].isEnd) {
+							string next_preview = languageAsset.Get (tree.treeNodes [optionIndices [i]].textKey);
+
+							if (next_preview != null) {
+								EditorGUILayout.BeginVertical ();
+								GUIStyle wrap = new GUIStyle ();
+								wrap.wordWrap = true;
+								EditorGUILayout.LabelField (next_preview, wrap);
+								EditorGUILayout.EndVertical ();
+							} else {
+								EditorGUILayout.LabelField ("Invalid Key");
+							}
+						}
+						EditorGUILayout.EndHorizontal ();
+					}
+
 
 					EditorGUILayout.BeginHorizontal ();
 					GUILayout.FlexibleSpace ();
